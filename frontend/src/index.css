@@ -547,3 +547,118 @@ h2 {
   gap: 1rem;
   padding: 1.5rem 1rem;
 }
+
+/* ===================== MOBILE ===================== */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  .screen {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .card {
+    padding: 1.25rem;
+  }
+
+  /* Inputs & buttons */
+  .text-input {
+    font-size: 0.95rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .code-input {
+    font-size: 1.2rem;
+    letter-spacing: 0.3rem;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  /* Game panel */
+  .glass-panel {
+    padding: 1.25rem;
+    gap: 1rem;
+  }
+
+  .game-area {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .gallows-container {
+    max-width: 150px;
+  }
+
+  /* Smaller letter boxes */
+  .letter-box {
+    width: 1.75rem;
+    height: 2.5rem;
+    font-size: 1.1rem;
+  }
+
+  .word-display {
+    gap: 0.75rem;
+  }
+
+  .word-group {
+    gap: 0.15rem;
+  }
+
+  /* Keyboard */
+  .key-btn {
+    width: 2.3rem;
+    height: 2.3rem;
+    font-size: 0.95rem;
+  }
+
+  .keyboard {
+    gap: 0.3rem;
+  }
+
+  /* Round / hint */
+  .round-info {
+    font-size: 0.85rem;
+  }
+
+  .hint-display {
+    font-size: 0.9rem;
+    padding: 0.4rem 1rem;
+  }
+
+  /* Room code display */
+  .room-code-display .code {
+    font-size: 2.2rem;
+    letter-spacing: 0.4rem;
+  }
+
+  /* Result & scoreboard */
+  .result-banner {
+    font-size: 1.35rem;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .scoreboard-mini {
+    padding: 1rem 1.5rem;
+    min-width: 200px;
+  }
+
+  .final-scoreboard {
+    min-width: unset;
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .word-reveal {
+    font-size: 1rem;
+  }
+}
