@@ -32,10 +32,15 @@ class JoinRequest(BaseModel):
 
 class CreateRequest(BaseModel):
     player_name: str
+    total_rounds: int = 5
 
 class WordSubmitRequest(BaseModel):
     word: str
     hint: str
+
+class ChatRequest(BaseModel):
+    player_id: str
+    message: str
 
 # --------------- Helpers ---------------
 
@@ -48,11 +53,13 @@ def generate_room_code():
 def mask_word(word: str, guessed: set) -> str:
     return "".join([c if c in guessed or c == ' ' else "_" for c in word])
 
-def get_room_view(room: dict) -> dict:
+def get_room_view(room: dict, requesting_player_id: str = None) -> dict:
     game = room.get("current_game")
     masked = None
+    is_setter = requesting_player_id == room.get("setter_id")
+
     if game:
-        if room["phase"] == "result" or room["phase"] == "final":
+        if room["phase"] in ["result", "final"] or is_setter:
             masked = game["word"]
         else:
             masked = mask_word(game["word"], game["guessed_letters"])
@@ -61,15 +68,18 @@ def get_room_view(room: dict) -> dict:
         "room_code": room["room_code"],
         "phase": room["phase"],  # waiting_for_player2, word_setting, guessing, result, final
         "round": room["round"],
-        "total_rounds": TOTAL_ROUNDS,
+        "total_rounds": room["total_rounds"],
+        "current_turn": room["current_turn"],
         "players": {
             p_id: {"name": p["name"], "score": p["score"]}
             for p_id, p in room["players"].items()
         },
         "setter_id": room.get("setter_id"),
         "guesser_id": room.get("guesser_id"),
+        "messages": room.get("messages", []),
         "game": {
             "masked_word": masked,
+            "is_reveal": is_setter and room["phase"] == "guessing",
             "hint": game["hint"] if game else None,
             "remaining_guesses": game["remaining_guesses"] if game else None,
             "guessed_letters": list(game["guessed_letters"]) if game else [],
@@ -88,13 +98,16 @@ def create_room(req: CreateRequest):
         "room_code": room_code,
         "phase": "waiting_for_player2",
         "round": 0,
+        "total_rounds": req.total_rounds,
+        "current_turn": 0, # Total turns taken
         "players": {
             player_id: {"name": req.player_name, "score": 0}
         },
         "player_order": [player_id],
-        "setter_id": player_id,   # Player 1 sets the word first
+        "setter_id": player_id,
         "guesser_id": None,
         "current_game": None,
+        "messages": [],
     }
 
     return {"room_code": room_code, "player_id": player_id}
@@ -119,11 +132,34 @@ def join_room(req: JoinRequest):
 
 
 @app.get("/api/room/{room_code}")
-def get_room(room_code: str):
+def get_room(room_code: str, player_id: str = None):
     room = rooms.get(room_code.upper())
     if not room:
         raise HTTPException(status_code=404, detail="Room not found")
-    return get_room_view(room)
+    return get_room_view(room, player_id)
+
+
+@app.post("/api/room/{room_code}/chat")
+def send_chat(room_code: str, req: ChatRequest):
+    room = rooms.get(room_code.upper())
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    
+    player = room["players"].get(req.player_id)
+    if not player:
+        raise HTTPException(status_code=403, detail="Not in room")
+
+    msg_obj = {
+        "player_name": player["name"],
+        "message": req.message,
+        "timestamp": str(uuid.uuid4())[:8] # simplified ID
+    }
+    room.setdefault("messages", []).append(msg_obj)
+    # limit to last 50 messages
+    if len(room["messages"]) > 50:
+        room["messages"].pop(0)
+
+    return {"status": "ok"}
 
 
 @app.post("/api/room/{room_code}/submit-word")
@@ -149,7 +185,7 @@ def submit_word(room_code: str, req: WordSubmitRequest, player_id: str):
     }
     room["phase"] = "guessing"
 
-    return get_room_view(room)
+    return get_room_view(room, player_id)
 
 
 @app.post("/api/room/{room_code}/guess")
@@ -168,7 +204,7 @@ def guess_letter(room_code: str, player_id: str, letter: str):
 
     game = room["current_game"]
     if letter in game["guessed_letters"]:
-        return get_room_view(room)
+        return get_room_view(room, player_id)
 
     game["guessed_letters"].add(letter)
 
@@ -184,7 +220,7 @@ def guess_letter(room_code: str, player_id: str, letter: str):
         game["status"] = "won"
         _end_round(room, won=True)
 
-    return get_room_view(room)
+    return get_room_view(room, player_id)
 
 
 @app.post("/api/room/{room_code}/next-round")
@@ -195,10 +231,17 @@ def next_round(room_code: str, player_id: str):
     if room["phase"] != "result":
         raise HTTPException(status_code=400, detail="Not in result phase")
 
-    if room["round"] >= TOTAL_ROUNDS:
+    # current_turn is now incremented in _end_round
+    
+    # Check if we finished all turns (2 turns per round)
+    if room["current_turn"] >= room["total_rounds"] * 2:
         room["phase"] = "final"
     else:
-        room["round"] += 1
+        # Increment round number every 2 turns
+        # If current_turn is even, we just finished the 2nd part of a round
+        if room["current_turn"] % 2 == 0:
+            room["round"] += 1
+            
         # Swap roles
         old_setter = room["setter_id"]
         room["setter_id"] = room["guesser_id"]
@@ -206,7 +249,7 @@ def next_round(room_code: str, player_id: str):
         room["current_game"] = None
         room["phase"] = "word_setting"
 
-    return get_room_view(room)
+    return get_room_view(room, player_id)
 
 
 def _end_round(room: dict, won: bool):
@@ -214,4 +257,5 @@ def _end_round(room: dict, won: bool):
     guesser_id = room["guesser_id"]
     score = game["remaining_guesses"] if won else 0
     room["players"][guesser_id]["score"] += score
+    room["current_turn"] += 1
     room["phase"] = "result"

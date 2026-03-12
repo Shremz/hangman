@@ -661,4 +661,456 @@ h2 {
   .word-reveal {
     font-size: 1rem;
   }
+
+  /* Chat Mobile Overrides */
+  .chat-wrapper {
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  .chat-toggle {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.25rem;
+  }
+
+  .chat-container {
+    width: calc(100vw - 2rem);
+    height: 50vh;
+    max-height: 400px;
+  }
+
+  /* Specating Mobile Overrides */
+  .specating-banner {
+    font-size: 0.85rem;
+    padding: 0.5rem 1.25rem;
+  }
+}
+
+/* ===================== CHAT WINDOW ===================== */
+.chat-wrapper {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.chat-toggle {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.chat-toggle:hover {
+  transform: scale(1.1);
+}
+
+.chat-container {
+  width: 320px;
+  height: 450px;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-header {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--panel-border);
+  font-weight: 700;
+  text-align: center;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.chat-msg {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.6rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  width: fit-content;
+  max-width: 90%;
+  word-wrap: break-word;
+}
+
+.chat-author {
+  color: var(--accent-color);
+  font-weight: 700;
+  margin-right: 0.4rem;
+}
+
+.emoji-bar {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.emoji-btn {
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: transform 0.2s;
+}
+
+.emoji-btn:hover {
+  transform: scale(1.3);
+}
+
+.chat-input-area {
+  padding: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.chat-input-area input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 0.5rem;
+  color: white;
+  outline: none;
+}
+
+.chat-input-area button {
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ===================== SPECATING ===================== */
+.specating-banner {
+  background: rgba(139, 92, 246, 0.2);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  color: #c084fc;
+  padding: 0.75rem 2rem;
+  border-radius: 50px;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(139, 92, 246, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+}
+
+.game-screen-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+
+/* ===================== ENHANCED SPECTATOR ===================== */
+.letter-box.spectator-placeholder {
+  opacity: 0.3 !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  border-bottom-color: var(--panel-border) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.letter-box.spectator-guessed {
+  color: var(--success-color) !important;
+  border-bottom-color: var(--success-color) !important;
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+  background: rgba(16, 185, 129, 0.1) !important;
+}
+
+/* ===================== CHAT NOTIFICATION ===================== */
+.notification-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 14px;
+  height: 14px;
+  background: var(--danger-color);
+  border: 2px solid #1e293b; /* Matches panel bg */
+  border-radius: 50%;
+  z-index: 10;
+  animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+/* ===================== ROUND SELECTOR ===================== */
+.rounds-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--panel-border);
+  margin: 0.5rem 0;
+}
+
+.rounds-selector label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.rounds-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rounds-number-input {
+  width: 60px;
+  background: transparent;
+  border: none;
+  color: var(--accent-color);
+  font-size: 1.2rem;
+  font-weight: 800;
+  text-align: center;
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.rounds-number-input::-webkit-outer-spin-button,
+.rounds-number-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.round-nav-btn {
+  background: var(--keyboard-bg);
+  border: 1px solid var(--panel-border);
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.round-nav-btn:hover:not(:disabled) {
+  background: var(--accent-color);
+}
+
+.round-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ===================== PREMIUM ROUND SELECTOR ===================== */
+.rounds-selector-premium {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  width: 100%;
+}
+
+.rounds-selector-premium label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.15rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.rounds-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.rounds-display {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid var(--accent-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+.rounds-val {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: white;
+  text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+}
+
+.scroll-btn {
+  background: rgba(30, 41, 59, 0.8) !important;
+  border: 1px solid var(--panel-border) !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 12px !important;
+  font-size: 1.2rem !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  color: var(--accent-color) !important;
+}
+
+.scroll-btn:hover:not(:disabled) {
+  background: var(--accent-color) !important;
+  color: white !important;
+  transform: scale(1.1);
+}
+
+/* ===================== NOTIFICATION BADGE ===================== */
+.notif-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--danger-color);
+  color: white;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 11px;
+  border: 2px solid var(--bg-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.4);
+  animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes bounceIn {
+  from { opacity: 0; transform: scale(0.3); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.notif-text {
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Cleanup for old selector */
+.rounds-selector { display: none; }
+
+/* ===================== PREMIUM UI REFINEMENTS ===================== */
+.card {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+  box-shadow: 0 0 20px rgba(37, 99, 235, 0.4) !important;
+  border: none !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05rem !important;
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 0 30px rgba(37, 99, 235, 0.6) !important;
+}
+
+/* ===================== VERTICAL ROUND SELECTOR ===================== */
+.rounds-selector-premium {
+  margin: 1rem 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.rounds-control {
+  flex-direction: column !important;
+  gap: 0.25rem !important;
+}
+
+.rounds-display {
+  width: 60px !important;
+  height: 40px !important;
+  border-radius: 8px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(0, 0, 0, 0.3) !important;
+  box-shadow: none !important;
+}
+
+.rounds-val {
+  font-size: 1.5rem !important;
+  text-shadow: none !important;
+}
+
+.scroll-btn {
+  background: transparent !important;
+  border: none !important;
+  font-size: 1rem !important;
+  padding: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  opacity: 0.7;
+}
+
+.scroll-btn:hover {
+  opacity: 1;
+  transform: scale(1.2) !important;
+  background: transparent !important;
+}
+
+/* ===================== NOTIFICATION BLINK ===================== */
+.chat-wrapper.closed .chat-toggle {
+  transition: all 0.3s ease;
+}
+
+.chat-wrapper.closed .chat-toggle.notif-active {
+  animation: slow-blink 2s infinite ease-in-out;
+}
+
+@keyframes slow-blink {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+  50% { box-shadow: 0 0 20px 5px rgba(239, 68, 68, 0.3); border-color: rgba(239, 68, 68, 0.5); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
