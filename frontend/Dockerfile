@@ -21,9 +21,8 @@ FROM nginx:alpine
 # Copy the build output from the first stage to nginx's serve directory
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copy a custom nginx configuration to handle SPA routing if necessary
-# If you don't have one, the default Nginx config works for simple cases, 
-# but for SPA it's better to have one that redirects 404s to index.html.
+# Copy a custom nginx configuration to handle SPA routing and reverse proxy
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
